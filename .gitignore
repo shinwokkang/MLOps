@@ -4,11 +4,9 @@ __pycache__/
 *.pyc
 .pytest_cache/
 
-# 데이터 (DVC로 별도 관리 예정 - git에는 안 올림)
-data/raw/*
-data/processed/*
-!data/raw/.gitkeep
-!data/processed/.gitkeep
+# 데이터: DVC가 data/raw/, data/processed/ 안에 자체 .gitignore를 만들어서
+# 실제 데이터 파일만 무시하고 .dvc 포인터 파일은 git이 추적하게 관리한다.
+# (여기서 미리 무시해버리면 DVC가 만드는 .dvc 파일까지 가려져서 git에 안 올라감)
 
 # MLflow 로컬 기록 (용량 크고, 실행할 때마다 새로 생김)
 mlruns/

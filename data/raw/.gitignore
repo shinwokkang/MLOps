@@ -1,0 +1,3 @@
+/Base.csv
+# Variant I~V는 3주차 드리프트 실험용, 아직 미사용 - DVC로도 등록하지 않고 그냥 무시
+Variant*.csv
