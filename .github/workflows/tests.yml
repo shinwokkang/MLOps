@@ -18,10 +18,12 @@ jobs:
         uses: actions/checkout@v4
 
       # 2. 파이썬 설치
+      #    requirements.txt는 로컬 개발환경(Python 3.9)에서 pip freeze로 뽑았으므로,
+      #    같은 버전을 써야 설치가 보장된다.
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: "3.9"
 
       # 3. LightGBM이 필요로 하는 시스템 라이브러리 설치 (로컬에서 libgomp1 설치했던 것과 동일)
       - name: Install system dependencies
