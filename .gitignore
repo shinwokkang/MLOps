@@ -1,0 +1,23 @@
+# 가상환경 / 패키지 캐시
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# 데이터 (DVC로 별도 관리 예정 - git에는 안 올림)
+data/raw/*
+data/processed/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+
+# MLflow 로컬 기록 (용량 크고, 실행할 때마다 새로 생김)
+mlruns/
+
+# 교재/참고자료 (프로젝트 코드 아님)
+reference/
+
+# Jupyter 체크포인트
+.ipynb_checkpoints/
+
+# OS
+.DS_Store

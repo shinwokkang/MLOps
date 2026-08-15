@@ -1,0 +1,44 @@
+# 경로, 전처리 규칙, 모델 하이퍼파라미터, 시간 분할 설정을 코드와 분리해둔 파일.
+# 값을 바꾸고 싶으면 코드를 건드리지 않고 이 파일만 수정하면 된다.
+
+paths:
+  raw_csv: data/raw/Base.csv
+  processed_dir: data/processed
+
+target_col: fraud_bool
+
+preprocessing:
+  # 정보량이 없어서 버리는 컬럼
+  drop_columns:
+    - device_fraud_count
+
+  # -1이 결측치를 의미하는 컬럼
+  neg1_as_missing_columns:
+    - prev_address_months_count
+    - bank_months_count
+    - current_address_months_count
+    - session_length_in_minutes
+    - device_distinct_emails_8w
+
+  # 음수 전체가 결측치를 의미하는 컬럼
+  negative_as_missing_columns:
+    - intended_balcon_amount
+
+  # category dtype으로 바꿀 컬럼 (LightGBM 네이티브 처리용)
+  categorical_columns:
+    - payment_type
+    - employment_status
+    - housing_status
+    - source
+    - device_os
+
+time_split:
+  train_months: [0, 5]   # month 0~5
+  valid_month: 6
+  test_month: 7
+
+model:
+  random_state: 42
+  # LightGBM 기본 하이퍼파라미터 사용 (베이스라인 규약)
+  # 값을 바꾸고 싶으면 여기에 추가: 예) num_leaves: 31
+  params: {}

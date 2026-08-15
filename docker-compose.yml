@@ -1,0 +1,31 @@
+services:
+  # MLflow 트래킹 서버: 계속 떠있으면서 학습 컨테이너의 기록을 받아준다
+  mlflow-server:
+    build: .
+    command: >
+      mlflow server
+      --host 0.0.0.0
+      --port 5000
+      --backend-store-uri /app/mlruns
+      --default-artifact-root /app/mlruns
+    ports:
+      - "5001:5000"  # 내 컴퓨터의 5001번 -> 컨테이너 내부 5000번
+    volumes:
+      - ./mlruns:/app/mlruns  # 기록을 컨테이너 밖(로컬)에도 남겨서 컨테이너가 사라져도 안 없어지게
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5000')"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  # 전처리 + 학습을 1회 실행하고, 결과를 mlflow-server로 전송
+  train:
+    build: .
+    depends_on:
+      mlflow-server:
+        condition: service_healthy  # mlflow-server가 "응답 가능" 상태가 될 때까지 대기 후 시작
+    environment:
+      - MLFLOW_TRACKING_URI=http://mlflow-server:5000  # 로컬 파일 대신 이 서버로 기록
+    volumes:
+      - ./data:/app/data
+    command: sh -c "python src/preprocess.py && python src/train.py"
