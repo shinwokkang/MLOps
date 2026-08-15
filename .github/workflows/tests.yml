@@ -1,0 +1,38 @@
+name: tests
+
+# 언제 실행할지: main 브랜치에 push되거나, main으로의 PR이 생성될 때
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  pytest:
+    # GitHub이 임시로 빌려주는 우분투 컴퓨터에서 실행
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. 우리 저장소 코드를 이 임시 컴퓨터로 내려받기
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. 파이썬 설치
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      # 3. LightGBM이 필요로 하는 시스템 라이브러리 설치 (로컬에서 libgomp1 설치했던 것과 동일)
+      - name: Install system dependencies
+        run: sudo apt-get update && sudo apt-get install -y libgomp1
+
+      # 4. 우리 패키지 설치
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+
+      # 5. pytest 실행
+      #    data/processed/*.parquet이 이 서버엔 없으므로(DVC remote가 로컬 경로라 접근 불가),
+      #    관련 테스트는 skipif 처리되어 자동으로 건너뛰어진다.
+      - name: Run tests
+        run: pytest tests/ -v
