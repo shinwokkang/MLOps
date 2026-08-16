@@ -1,5 +1,7 @@
 # BAF 사기 탐지 MLOps 미니 프로젝트
 
+[![tests](https://github.com/shinwokkang/MLOps/actions/workflows/tests.yml/badge.svg)](https://github.com/shinwokkang/MLOps/actions/workflows/tests.yml)
+
 은행 계좌 개설 신청 데이터(Bank Account Fraud Dataset, NeurIPS 2022)로 사기 여부를 예측하는 모델을 만들고, 재현 가능한 파이프라인(전처리 → 학습 → 실험 기록)으로 관리하는 프로젝트입니다.
 
 자세한 문제 정의, 평가 지표, 아키텍처는 [`docs/presentation.md`](docs/presentation.md)를 참고하세요. 발표 대본은 [`docs/script.md`](docs/script.md)에 있습니다.
