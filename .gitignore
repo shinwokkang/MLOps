@@ -11,6 +11,12 @@ __pycache__/
 # MLflow 로컬 기록 (용량 크고, 실행할 때마다 새로 생김)
 mlruns/
 
+# train.py가 서빙용으로 내보내는 모델 파일 (학습 결과물, 소스 아님)
+models/
+
+# serve.py가 남기는 예측 로그 (실행 결과물, 소스 아님)
+logs/
+
 # 교재/참고자료 (프로젝트 코드 아님)
 reference/
 

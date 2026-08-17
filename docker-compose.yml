@@ -28,4 +28,19 @@ services:
       - MLFLOW_TRACKING_URI=http://mlflow-server:5000  # 로컬 파일 대신 이 서버로 기록
     volumes:
       - ./data:/app/data
+      - ./models:/app/models  # 여기서 만든 models/pyfunc_model을 api 서비스와 공유
     command: sh -c "python src/preprocess.py && python src/train.py"
+
+  # train이 만든 모델(+임계값)을 읽어서 예측 API를 서빙한다
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.serve
+    depends_on:
+      train:
+        condition: service_completed_successfully  # train이 "끝날 때까지" 대기 (뜰 때까지가 아니라)
+    ports:
+      - "8001:8000"
+    volumes:
+      - ./models:/app/models
+      - ./logs:/app/logs  # 예측 로그(logs/predictions.jsonl)도 컨테이너 밖에 남게

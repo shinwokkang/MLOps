@@ -13,6 +13,9 @@ conf/config.yaml에서 읽어온다 (config.py 참고).
 import pandas as pd
 
 from config import load_config
+from logging_config import get_logger
+
+logger = get_logger("preprocess")
 
 _cfg = load_config()
 
@@ -73,7 +76,11 @@ def split_by_month(df: pd.DataFrame):
 
 
 def main():
+    logger.info("전처리 시작: %s", RAW_PATH)
+
     df = load_raw(RAW_PATH)
+    logger.info("원본 로드 완료: %d행 %d열", *df.shape)
+
     df = drop_uninformative_columns(df)
     df = convert_missing_markers(df)
     df = cast_categoricals(df)
@@ -86,7 +93,11 @@ def main():
 
     for name, part in [("train", train), ("valid", valid), ("test", test)]:
         n_fraud = int(part["fraud_bool"].sum())
-        print(f"{name}: {len(part)}행 / 사기 {n_fraud}건 / {n_fraud / len(part) * 100:.3f}%")
+        logger.info(
+            "%s: %d행 / 사기 %d건 / %.3f%%", name, len(part), n_fraud, n_fraud / len(part) * 100
+        )
+
+    logger.info("전처리 종료: %s 에 parquet 저장 완료", PROCESSED_DIR)
 
 
 if __name__ == "__main__":

@@ -23,6 +23,19 @@ def tpr_at_fpr(y_true, y_score, target_fpr: float = 0.05) -> float:
     return float(tpr[idx])
 
 
+def threshold_at_fpr(y_true, y_score, target_fpr: float = 0.05) -> float:
+    """FPR을 target_fpr 이하로 제한하는 지점의 실제 확률 임계값(threshold).
+
+    tpr_at_fpr가 "그 지점에서 TPR이 얼마인지"를 반환한다면,
+    이 함수는 "그 지점이 확률 몇 이상부터 시작되는지"를 반환한다.
+    서빙 시 이 값 이상을 '사기'로 판정하는 데 쓴다.
+    """
+    fpr, tpr, thresholds = roc_curve(y_true, y_score)
+    idx = np.searchsorted(fpr, target_fpr, side="right") - 1
+    idx = max(idx, 0)
+    return float(thresholds[idx])
+
+
 def auprc(y_true, y_score) -> float:
     """Precision-Recall 곡선 아래 면적. 불균형 데이터에서 AUROC보다 신뢰도가 높다."""
     return float(average_precision_score(y_true, y_score))

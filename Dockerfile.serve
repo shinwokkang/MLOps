@@ -1,0 +1,22 @@
+# 학습용 Dockerfile과 앞부분(베이스 이미지, 시스템 라이브러리, 패키지 설치)은 동일하다.
+# 다른 점: 마지막에 데이터 전처리/학습을 실행하는 대신, 계속 떠서 요청을 기다리는
+# API 서버(uvicorn)를 실행한다.
+# requirements.txt가 Python 3.9 기준으로 얼려져 있으므로 베이스 이미지도 3.9로 맞춘다.
+FROM python:3.9-slim
+
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y --no-install-recommends libgomp1 \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY src/ src/
+
+# 컨테이너 외부(내 컴퓨터, 또는 다른 서버)에서 8000번 포트로 접속할 수 있게 노출
+EXPOSE 8000
+
+# models/model.pkl은 이미지에 넣지 않는다 - 학습할 때마다 바뀌는 결과물이라
+# 실행 시점에 볼륨으로 연결한다 (data/를 볼륨으로 연결했던 것과 같은 이유)
+CMD ["uvicorn", "src.serve:app", "--host", "0.0.0.0", "--port", "8000"]

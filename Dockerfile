@@ -1,6 +1,7 @@
 # 1. 어떤 기본 상자(base image)에서 시작할지 지정
-#    python:3.11-slim = 파이썬 3.11이 미리 깔린 가벼운 리눅스(Debian) 이미지
-FROM python:3.11-slim
+#    requirements.txt는 로컬 개발환경(Python 3.9)에서 pip freeze로 뽑았으므로,
+#    같은 버전을 써야 패키지 간 의존성 충돌(예: typer가 요구하는 click 버전)이 안 남
+FROM python:3.9-slim
 
 # 2. 컨테이너 내부에서 명령어들이 실행될 기준 폴더
 WORKDIR /app
